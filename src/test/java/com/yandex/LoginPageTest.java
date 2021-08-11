@@ -7,17 +7,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.util.concurrent.TimeUnit;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class LoginPageTest {
-    public static WebDriver driver = null;
-    public static LoginPage loginPage;
+    WebDriver driver;
 
-    @BeforeClass
-    public static void setup() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Vadim\\Downloads\\chromedriver\\chromedriver.exe");
+    @Before
+    public void setup() {
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }
@@ -25,10 +25,10 @@ public class LoginPageTest {
     @Test
     public void login() {
         driver.get("https://mail.yandex.com/");
-        WebElement enterPage = driver.findElement(By.linkText("Log in"));
+        WebElement enterPage = driver.findElement(By.xpath("//a[contains(@class, \"HeadBanner-Button-Enter\")]"));
         enterPage.click();
-        WebElement lofinField = driver.findElement(By.id("passp-field-login"));
-        lofinField.sendKeys("someuserfortest");
+        WebElement loginField = driver.findElement(By.id("passp-field-login"));
+        loginField.sendKeys("someuserfortest");
         WebElement loginButton = driver.findElement(By.id("passp:sign-in"));
         loginButton.click();
         WebElement passField = driver.findElement(By.id("passp-field-passwd"));
@@ -41,20 +41,15 @@ public class LoginPageTest {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.className("search-bubble-list__bubble-wrap")));
 
         WebElement inbox = driver.findElement(By.xpath("//a[contains(@title, \"Inbox\")]"));
-        String actualTitle = "Inbox — Yandex.Mail";
-        String expectedTitle = driver.getTitle();
-
-
-        //Assert.assertEquals(expectedTitle, actualTitle);
+        String expectedTitle = "Inbox — Yandex.Mail";
 
         assertAll(
-                () -> assertEquals(expectedTitle, actualTitle),
+                () -> assertEquals(driver.getTitle(), expectedTitle),
                 () -> assertEquals(inbox.getText(), "Inbox"));
-
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @After
+    public void tearDown() {
         driver.close();
     }
 }
